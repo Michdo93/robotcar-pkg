@@ -13,7 +13,7 @@ from robotcar.msg import Steer
 from robotcar.msg import Pan
 from robotcar.msg import Tilt
 
-env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar'))
+env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/config'))
 sys.path.insert(0, env)
 
 from servo_config import ServoConfig

@@ -9,11 +9,11 @@ import getpass
 import socket
 import re
 from robotcar.msg import Steer
-from std_msgs import Bool
-from std_msgs import Int8
-from std_msgs import Float32
+from std_msgs.msg import Bool
+from std_msgs.msg import Int8
+from std_msgs.msg import Float32
 
-env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar'))
+env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/config'))
 sys.path.insert(0, env)
 
 from servo_config import ServoConfig
@@ -27,6 +27,15 @@ class SteerNode(object):
     """Node example class."""
 
     def __init__(self):
+        self.conf = ServoConfig()
+        self.mg996r = ServoMotor(0, self.conf.getNeutral('steering'), self.conf.getMin('steering'), self.conf.getMax('steering'), 5)
+
+        # Initialize message variables.
+        self.enable = False
+        self.angle = self.conf.getNeutral('steering')
+
+        self.mg996r.set_current_pwm(self.angle)
+
         self.robot_host = re.sub("-", "_", socket.gethostname())
 
         self.steerSub = rospy.Subscriber(self.robot_host + '/steer/set', Steer, self.steerCallback)
@@ -63,15 +72,6 @@ class SteerNode(object):
         self.steerRangeDegreePub = rospy.Publisher(self.robot_host + '/steer/get/range/degree', Float32, queue_size=10)
 
         self.rate = rospy.Rate(10) # 10hz
-
-        self.conf = ServoConfig()
-        self.mg996r = ServoMotor(0, self.conf.getNeutral('steering'), self.conf.getMin('steering'), self.conf.getMax('steering'), 5)
-
-        # Initialize message variables.
-        self.enable = False
-        self.angle = self.conf.getNeutral('steering')
-
-        self.mg996r.set_current_pwm(self.angle)
 
         if self.enable:
             self.start()
@@ -134,7 +134,7 @@ class SteerNode(object):
             steerNeutralDegMsg = Steer()
 
             steerRangeMsg = Int8()
-            steerRangeDegMsg = Int8()
+            steerRangeDegMsg = Float32()
 
             steerMsg.angle = self.mg996r.get_current_pwm()
             steerDegMsg.angle = self.mg996r.get_current_degree()
@@ -151,7 +151,7 @@ class SteerNode(object):
             steerMaxDegMsg.angle = self.mg996r.get_servo_max_degree()
 
             steerNeutralMsg.angle = self.mg996r.get_servo_neutral()
-            steerNeutralDegMsg.angle = self.mg996r.get_servo_neutral_degree()
+            steerNeutralDegMsg.angle = 0.0
 
             steerRangeMsg.data = self.mg996r.get_servo_range_pwm()
             steerRangeDegMsg.data = self.mg996r.get_servo_range_degree()
@@ -187,6 +187,7 @@ class SteerNode(object):
     def stop(self):
         """Turn off publisher and subscriber."""
         self.enable = False
+        # self.mg996r.reset()
 
         self.steerSub.unregister()
 
@@ -223,14 +224,14 @@ class SteerNode(object):
 
     def steerCallback(self, data):
         """Handle subscriber data."""
-        self.angle = data.data
-        self.mg996r.set_current_pwm(self.angle)
+        self.angle = data.angle
+        self.mg996r.set_current_pwm(int(self.angle))
 
         rospy.loginfo(rospy.get_caller_id() + ' Set steering angle to %s', self.angle)
 
     def steerDegreeCallback(self, data):
         """Handle subscriber data."""
-        self.mg996r.set_current_degree(data.data)
+        self.mg996r.set_current_degree(data.angle)
         self.angle = self.mg996r.get_current_pwm()
 
         rospy.loginfo(rospy.get_caller_id() + ' Got steering angle degree %s and set angle to %s' % (data.data, self.angle))
