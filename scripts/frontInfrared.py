@@ -7,6 +7,7 @@ import getpass
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Range
+from robotcar_msgs.msg import RelativeVelocity
 
 env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/driver/sensor'))
 sys.path.insert(0, env)
@@ -18,6 +19,7 @@ class FrontInfrared():
     def __init__(self):
         self.robot_host = re.sub("-", "_", socket.gethostname())
         self.infraredPub = rospy.Publisher(self.robot_host + '/infrared/front/distance', Range, queue_size=10)
+        self.infraredVelocityPub = rospy.Publisher(self.robot_host + '/infrared/front/relative_velocity', RelativeVelocity, queue_size=10)
         self.rate = rospy.Rate(10) # 10hz
 
         self.enable = False
@@ -30,6 +32,7 @@ class FrontInfrared():
     def start(self):
         self.enable = True
         self.infraredPub = rospy.Publisher(self.robot_host + '/infrared/front/distance', Range, queue_size=10)
+        self.infraredVelocityPub = rospy.Publisher(self.robot_host + '/infrared/front/relative_velocity', RelativeVelocity, queue_size=10)
         
         infrared = IRGP2Y0A02YKOF(0)
 
@@ -40,12 +43,14 @@ class FrontInfrared():
         while not rospy.is_shutdown():
             
             distance = infrared.distance()
+            relative_velocity = infrared.speed()
 
-            message_str = "frontInfrared Distance: %s cm" % distance
+            message_str = "frontInfrared Distance: %s cm and Speed: %s m/s" % (distance, relative_velocity)
             rospy.loginfo(message_str)
             
             #for distance in ranges:
             r = Range()
+            rv = RelativeVelocity()
 
             r.header.stamp = rospy.Time.now()
             r.header.frame_id = "/base_link"
@@ -55,13 +60,24 @@ class FrontInfrared():
             r.max_range = max_range
 
             r.range = distance
+
+            rv.header.stamp = rospy.Time.now()
+            rv.header.frame_id = "/base_link"
+            rv.radiation_type = Range.INFRARED
+            rv.field_of_view = 0.087266462599716 # 5 degrees
+            rv.min_range = min_range
+            rv.max_range = max_range
+
+            rv.range = relative_velocity
                 
             self.infraredPub.publish(r)
+            self.infraredVelocityPub.publish(rv)
             self.rate.sleep()
 
     def stop(self):
         self.enable = False
         self.infraredPub.unregister()
+        self.infraredVelocityPub.unregister()
 
 # Main function.
 if __name__ == '__main__':

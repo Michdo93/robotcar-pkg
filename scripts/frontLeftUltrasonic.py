@@ -7,6 +7,7 @@ import getpass
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Range
+from robotcar_msgs.msg import RelativeVelocity
 
 env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/driver/sensor'))
 sys.path.insert(0, env)
@@ -18,6 +19,8 @@ class FrontLeftUltrasonic(object):
     def __init__(self):
         self.robot_host = re.sub("-", "_", socket.gethostname())
         self.ultrasonicPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/left/distance', Range, queue_size=10)
+        self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/left/relative_velocity', RelativeVelocity, queue_size=10)
+
         self.rate = rospy.Rate(10) # 10hz
 
         self.enable = False
@@ -30,6 +33,7 @@ class FrontLeftUltrasonic(object):
     def start(self):
         self.enable = True
         self.ultrasonicPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/left/distance', Range, queue_size=10)
+        self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/left/relative_velocity', RelativeVelocity, queue_size=10)
         
         ultrasonic = UltrasonicHCSR04(23, 24)
 
@@ -40,12 +44,14 @@ class FrontLeftUltrasonic(object):
         while not rospy.is_shutdown():
             
             distance = ultrasonic.distance()
+            relative_velocity = ultrasonic.speed()
 
-            message_str = "frontLeftUltrasonic Distance: %s cm" % distance
+            message_str = "frontLeftUltrasonic Distance: %s cm and Speed: %s m/s" % (distance, relative_velocity)
             rospy.loginfo(message_str)
             
             #for distance in ranges:
             r = Range()
+            rv = RelativeVelocity()
 
             r.header.stamp = rospy.Time.now()
             r.header.frame_id = "/base_link"
@@ -56,12 +62,23 @@ class FrontLeftUltrasonic(object):
 
             r.range = distance
                 
-            self.ultrasonicPub.publish(r)    
+            rv.header.stamp = rospy.Time.now()
+            rv.header.frame_id = "/base_link"
+            rv.radiation_type = Range.ULTRASOUND
+            rv.field_of_view = 0.26179938779915 # 15 degrees
+            rv.min_range = min_range
+            rv.max_range = max_range
+
+            rv.relative_velocity = relative_velocity
+                
+            self.ultrasonicPub.publish(r)
+            self.ultrasonicVelocityPub.publish(rv)  
             self.rate.sleep()
 
     def stop(self):
         self.enable = False
         self.ultrasonicPub.unregister()
+        self.ultrasonicVelocityPub.unregister()
 
 # Main function.
 if __name__ == '__main__':

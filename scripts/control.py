@@ -8,10 +8,10 @@ import rospy
 import message_filters
 import threading
 from std_msgs.msg import Float64
-from robotcar.msg import Motor
-from robotcar.msg import Steer
-from robotcar.msg import Pan
-from robotcar.msg import Tilt
+from robotcar_msgs.msg import Motor
+from robotcar_msgs.msg import Steer
+from robotcar_msgs.msg import Pan
+from robotcar_msgs.msg import Tilt
 
 env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/config'))
 sys.path.insert(0, env)
@@ -121,15 +121,15 @@ class RobotCarControl(object):
 
             if self.steer != None:
                 if self.steer == 0.0:
-                    steer.angle = neutralPWM
+                    steer.pwm = neutralPWM
                 elif self.steer > 0.0:
-                    steer.angle = 5 * round((neutralPWM + (maxPWM - neutralPWM) * self.steer)/5)
+                    steer.pwm = 5 * round((neutralPWM + (maxPWM - neutralPWM) * self.steer)/5)
                 elif self.steer < 0.0:
-                    steer.angle = 5 * round((neutralPWM + (neutralPWM - minPWM) * self.steer)/5)
+                    steer.pwm = 5 * round((neutralPWM + (neutralPWM - minPWM) * self.steer)/5)
             else:
-                steer.angle = neutralPWM
+                steer.pwm = neutralPWM
 
-            msg = "Publish steer %s" % steer.angle
+            msg = "Publish steer %s" % steer.pwm
             rospy.loginfo(msg)
 
             self.steerPub.publish(steer)

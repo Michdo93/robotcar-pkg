@@ -8,11 +8,13 @@ import rospy
 import getpass
 import socket
 import re
-from robotcar.msg import Motor
 from std_msgs.msg import Bool
 from std_msgs.msg import Int8
-from std_msgs.msg import Float32
 from std_msgs.msg import String
+from robotcar_msgs.msg import Motor
+from robotcar_msgs.msg import DutyCycle
+from robotcar_msgs.msg import Rpm
+from robotcar_msgs.msg import Velocity
 
 env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/driver/actor'))
 sys.path.insert(0, env)
@@ -38,9 +40,9 @@ class MotorNode(object):
         self.motorRateSub = rospy.Subscriber(self.robot_host + '/motor/set/rate', Int8, self.motorCallback)
         self.motorDirectionSub = rospy.Subscriber(self.robot_host + '/motor/set/direction', String, self.motorCallback)
 
-        self.motorMSSub = rospy.Subscriber(self.robot_host + '/motor/set/ms', Float32, self.motorCallback)
-        self.motorKMHSub = rospy.Subscriber(self.robot_host + '/motor/set/kmh', Float32, self.motorCallback)
-        self.motorMPHSub = rospy.Subscriber(self.robot_host + '/motor/set/mph', Float32, self.motorCallback)
+        self.motorMSSub = rospy.Subscriber(self.robot_host + '/motor/set/ms', Velocity, self.motorCallback)
+        self.motorKMHSub = rospy.Subscriber(self.robot_host + '/motor/set/kmh', Velocity, self.motorCallback)
+        self.motorMPHSub = rospy.Subscriber(self.robot_host + '/motor/set/mph', Velocity, self.motorCallback)
 
         self.engineStopSub = rospy.Subscriber(self.robot_host + '/motor/engine/stop', Bool, self.motorCallback)
 
@@ -49,22 +51,22 @@ class MotorNode(object):
         self.motorRatePub = rospy.Publisher(self.robot_host + '/motor/get/rate', Int8, queue_size=10)
         self.motorDirectionPub = rospy.Publisher(self.robot_host + '/motor/get/direction', String, queue_size=10)
 
-        self.motorMSPub = rospy.Publisher(self.robot_host + '/motor/get/ms', Float32, queue_size=10)
-        self.motorKMHPub = rospy.Publisher(self.robot_host + '/motor/get/kmh', Float32, queue_size=10)
-        self.motorMPHPub = rospy.Publisher(self.robot_host + '/motor/get/mph', Float32, queue_size=10)
+        self.motorMSPub = rospy.Publisher(self.robot_host + '/motor/get/ms', Velocity, queue_size=10)
+        self.motorKMHPub = rospy.Publisher(self.robot_host + '/motor/get/kmh', Velocity, queue_size=10)
+        self.motorMPHPub = rospy.Publisher(self.robot_host + '/motor/get/mph', Velocity, queue_size=10)
 
-        self.motorMSMaxPub = rospy.Publisher(self.robot_host + '/motor/get/ms/max', Float32, queue_size=10)
-        self.motorKMHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/kmh/max', Float32, queue_size=10)
-        self.motorMPHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/mph/max', Float32, queue_size=10)
+        self.motorMSMaxPub = rospy.Publisher(self.robot_host + '/motor/get/ms/max', Velocity, queue_size=10)
+        self.motorKMHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/kmh/max', Velocity, queue_size=10)
+        self.motorMPHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/mph/max', Velocity, queue_size=10)
 
         self.motorDCMaxPub = rospy.Publisher(self.robot_host + '/motor/get/dc_max', Int8, queue_size=10)
-        self.motorDutyCyclePub = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle', Int8, queue_size=10)
-        self.motorDutyCycleFrequency = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle/frequency', Int8, queue_size=10)
-        self.motorPWMPub = rospy.Publisher(self.robot_host + '/motor/get/pwm', Int8, queue_size=10)
+        self.motorDutyCyclePub = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle', DutyCycle, queue_size=10)
+        self.motorDutyCycleFrequency = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle/frequency', DutyCycle, queue_size=10)
+        self.motorPWMPub = rospy.Publisher(self.robot_host + '/motor/get/pwm', DutyCycle, queue_size=10)
 
-        self.motorRPMPub = rospy.Publisher(self.robot_host + '/motor/get/rpm', Int8, queue_size=10)
-        self.motorRPMCurrentPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/current', Int8, queue_size=10)
-        self.motorRPMMaxPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/max', Int8, queue_size=10)
+        self.motorRPMPub = rospy.Publisher(self.robot_host + '/motor/get/rpm', Rpm, queue_size=10)
+        self.motorRPMCurrentPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/current', Rpm, queue_size=10)
+        self.motorRPMMaxPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/max', Rpm, queue_size=10)
 
         self.ros_rate = rospy.Rate(10) # 10hz
 
@@ -79,36 +81,36 @@ class MotorNode(object):
 
         self.motorSub = rospy.Subscriber(self.robot_host + '/motor/set', Motor, self.motorCallback)
         
-        self.motorRateSub = rospy.Subscriber(self.robot_host + '/motor/set/rate', Int8, self.motorRateCallback)
-        self.motorDirectionSub = rospy.Subscriber(self.robot_host + '/motor/set/direction', String, self.motorDirectionCallback)
+        self.motorRateSub = rospy.Subscriber(self.robot_host + '/motor/set/rate', Int8, self.motorCallback)
+        self.motorDirectionSub = rospy.Subscriber(self.robot_host + '/motor/set/direction', String, self.motorCallback)
 
-        self.motorMSSub = rospy.Subscriber(self.robot_host + '/motor/set/ms', Float32, self.motorMSCallback)
-        self.motorKMHSub = rospy.Subscriber(self.robot_host + '/motor/set/kmh', Float32, self.motorKMHCallback)
-        self.motorMPHSub = rospy.Subscriber(self.robot_host + '/motor/set/mph', Float32, self.motorMPHCallback)
+        self.motorMSSub = rospy.Subscriber(self.robot_host + '/motor/set/ms', Velocity, self.motorCallback)
+        self.motorKMHSub = rospy.Subscriber(self.robot_host + '/motor/set/kmh', Velocity, self.motorCallback)
+        self.motorMPHSub = rospy.Subscriber(self.robot_host + '/motor/set/mph', Velocity, self.motorCallback)
 
-        self.engineStopSub = rospy.Subscriber(self.robot_host + '/motor/engine/stop', Bool, self.engineStopCallback)
+        self.engineStopSub = rospy.Subscriber(self.robot_host + '/motor/engine/stop', Bool, self.motorCallback)
 
         self.motorPub = rospy.Publisher(self.robot_host + '/motor/get', Motor, queue_size=10)
 
         self.motorRatePub = rospy.Publisher(self.robot_host + '/motor/get/rate', Int8, queue_size=10)
         self.motorDirectionPub = rospy.Publisher(self.robot_host + '/motor/get/direction', String, queue_size=10)
 
-        self.motorMSPub = rospy.Publisher(self.robot_host + '/motor/get/ms', Float32, queue_size=10)
-        self.motorKMHPub = rospy.Publisher(self.robot_host + '/motor/get/kmh', Float32, queue_size=10)
-        self.motorMPHPub = rospy.Publisher(self.robot_host + '/motor/get/mph', Float32, queue_size=10)
+        self.motorMSPub = rospy.Publisher(self.robot_host + '/motor/get/ms', Velocity, queue_size=10)
+        self.motorKMHPub = rospy.Publisher(self.robot_host + '/motor/get/kmh', Velocity, queue_size=10)
+        self.motorMPHPub = rospy.Publisher(self.robot_host + '/motor/get/mph', Velocity, queue_size=10)
 
-        self.motorMSMaxPub = rospy.Publisher(self.robot_host + '/motor/get/ms/max', Float32, queue_size=10)
-        self.motorKMHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/kmh/max', Float32, queue_size=10)
-        self.motorMPHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/mph/max', Float32, queue_size=10)
+        self.motorMSMaxPub = rospy.Publisher(self.robot_host + '/motor/get/ms/max', Velocity, queue_size=10)
+        self.motorKMHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/kmh/max', Velocity, queue_size=10)
+        self.motorMPHMaxPub = rospy.Publisher(self.robot_host + '/motor/get/mph/max', Velocity, queue_size=10)
 
         self.motorDCMaxPub = rospy.Publisher(self.robot_host + '/motor/get/dc_max', Int8, queue_size=10)
-        self.motorDutyCyclePub = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle', Int8, queue_size=10)
-        self.motorDutyCycleFrequency = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle/frequency', Int8, queue_size=10)
-        self.motorPWMPub = rospy.Publisher(self.robot_host + '/motor/get/pwm', Int8, queue_size=10)
+        self.motorDutyCyclePub = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle', DutyCycle, queue_size=10)
+        self.motorDutyCycleFrequency = rospy.Publisher(self.robot_host + '/motor/get/duty_cycle/frequency', DutyCycle, queue_size=10)
+        self.motorPWMPub = rospy.Publisher(self.robot_host + '/motor/get/pwm', DutyCycle, queue_size=10)
 
-        self.motorRPMPub = rospy.Publisher(self.robot_host + '/motor/get/rpm', Int8, queue_size=10)
-        self.motorRPMCurrentPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/current', Int8, queue_size=10)
-        self.motorRPMMaxPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/max', Int8, queue_size=10)
+        self.motorRPMPub = rospy.Publisher(self.robot_host + '/motor/get/rpm', Rpm, queue_size=10)
+        self.motorRPMCurrentPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/current', Rpm, queue_size=10)
+        self.motorRPMMaxPub = rospy.Publisher(self.robot_host + '/motor/get/rpm/max', Rpm, queue_size=10)
 
         while not rospy.is_shutdown():
             motorMsg = Motor()
@@ -116,20 +118,20 @@ class MotorNode(object):
             motorRateMsg = Int8()
             motorDirectionMsg = String()
 
-            motorMSMsg = Float32()
-            motorKMHMsg = Float32()
-            motorMPHMsg = Float32()
+            motorMSMsg = Velocity()
+            motorKMHMsg = Velocity()
+            motorMPHMsg = Velocity()
 
-            motorMSMaxMsg = Float32()
-            motorKMHMaxMsg = Float32()
-            motorMPHMaxMsg = Float32()
+            motorMSMaxMsg = Velocity()
+            motorKMHMaxMsg = Velocity()
+            motorMPHMaxMsg = Velocity()
 
             motorDCMaxMsg = Int8()
-            motorDutyCycleFrequencyMsg = Int8()
-            motorPWMMsg = Int8()
+            motorDutyCycleFrequencyMsg = DutyCycle()
+            motorPWMMsg = DutyCycle()
 
-            motorRPMMsg = Int8()
-            motorRPMMaxMsg = Int8()
+            motorRPMMsg = Rpm()
+            motorRPMMaxMsg = Rpm()
 
             motorMsg.rate = self.rate
             motorMsg.direction = self.direction
@@ -137,20 +139,20 @@ class MotorNode(object):
             motorRateMsg.data = self.rate
             motorDirectionMsg.data = self.direction
 
-            motorMSMsg.data = self.motorjga25_370.getLinearVelocityMS()
-            motorKMHMsg.data = self.motorjga25_370.getLinearVelocityKMH()
-            motorMPHMsg.data = self.motorjga25_370.getLinearVelocityMPH()
+            motorMSMsg.velocity = self.motorjga25_370.getLinearVelocityMS()
+            motorKMHMsg.velocity = self.motorjga25_370.getLinearVelocityKMH()
+            motorMPHMsg.velocity = self.motorjga25_370.getLinearVelocityMPH()
 
-            motorMSMaxMsg.data = self.motorjga25_370.getMaxLinearVelocityMS()
-            motorKMHMaxMsg.data = self.motorjga25_370.getMaxLinearVelocityKMH()
-            motorMPHMaxMsg.data = self.motorjga25_370.getMaxLinearVelocityMPH()
+            motorMSMaxMsg.velocity = self.motorjga25_370.getMaxLinearVelocityMS()
+            motorKMHMaxMsg.velocity = self.motorjga25_370.getMaxLinearVelocityKMH()
+            motorMPHMaxMsg.velocity = self.motorjga25_370.getMaxLinearVelocityMPH()
 
             motorDCMaxMsg.data = self.motorjga25_370.getDCMax()
-            motorDutyCycleFrequencyMsg.data = self.motorjga25_370.getFrequency()
-            motorPWMMsg.data = self.motorjga25_370.getMotorPWM()
+            motorDutyCycleFrequencyMsg.pwm = self.motorjga25_370.getFrequency()
+            motorPWMMsg.pwm = self.motorjga25_370.getMotorPWM()
 
-            motorRPMMsg.data = self.motorjga25_370.getRPM()
-            motorRPMMaxMsg.data = self.motorjga25_370.getRPMMax()
+            motorRPMMsg.rpm = self.motorjga25_370.getRPM()
+            motorRPMMaxMsg.rpm = self.motorjga25_370.getRPMMax()
 
             self.motorPub.publish(motorMsg)
 

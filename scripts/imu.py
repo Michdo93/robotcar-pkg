@@ -4,10 +4,16 @@ import sys
 import re
 import socket
 import rospy
-from std_msgs.msg import Float64
-from geometry_msgs.msg import Vector3
-from sensor_msgs.msg import Imu
 from sense_hat import SenseHat
+from std_header_msgs.msg import Float64
+from sensor_msgs.msg import Imu
+from robotcar_msgs import Accelerometer
+from robotcar_msgs import Gyroscope
+from robotcar_msgs import Magnetometer
+from robotcar_msgs import Orientation
+from robotcar_msgs import Pitch
+from robotcar_msgs import Roll
+from robotcar_msgs import Yaw
 
 class IMU(object):
 
@@ -17,31 +23,31 @@ class IMU(object):
         self.imuPub = rospy.Publisher(self.robot_host + '/imu', Imu, queue_size=10)
         self.imuRawPub = rospy.Publisher(self.robot_host + '/imu/raw', Imu, queue_size=10)
         
-        self.accelerometerPub = rospy.Publisher(self.robot_host + '/imu/accelerometer', Vector3, queue_size=10)
-        self.accelerometerPitchPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/pitch', Float64, queue_size=10)
-        self.accelerometerRollPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/roll', Float64, queue_size=10)
-        self.accelerometerYawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/yaw', Float64, queue_size=10)
-        self.accelerometerRawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw', Vector3, queue_size=10)
+        self.accelerometerPub = rospy.Publisher(self.robot_host + '/imu/accelerometer', Accelerometer, queue_size=10)
+        self.accelerometerPitchPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/pitch', Pitch, queue_size=10)
+        self.accelerometerRollPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/roll', Roll, queue_size=10)
+        self.accelerometerYawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/yaw', Yaw, queue_size=10)
+        self.accelerometerRawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw', Accelerometer, queue_size=10)
         self.accelerometerRawXPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw/x', Float64, queue_size=10)
         self.accelerometerRawYPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw/y', Float64, queue_size=10)
         self.accelerometerRawZPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw/z', Float64, queue_size=10)
 
-        self.gyroscopePub = rospy.Publisher(self.robot_host + '/imu/gyroscope', Vector3, queue_size=10)
-        self.gyroscopePitchPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/pitch', Float64, queue_size=10)
-        self.gyroscopeRollPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/roll', Float64, queue_size=10)
-        self.gyroscopeYawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/yaw', Float64, queue_size=10)
-        self.gyroscopeRawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw', Vector3, queue_size=10)
+        self.gyroscopePub = rospy.Publisher(self.robot_host + '/imu/gyroscope', Gyroscope, queue_size=10)
+        self.gyroscopePitchPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/pitch', Pitch, queue_size=10)
+        self.gyroscopeRollPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/roll', Roll, queue_size=10)
+        self.gyroscopeYawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/yaw', Yaw, queue_size=10)
+        self.gyroscopeRawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw', Gyroscope, queue_size=10)
         self.gyroscopeRawXPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw/x', Float64, queue_size=10)
         self.gyroscopeRawYPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw/y', Float64, queue_size=10)
         self.gyroscopeRawZPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw/z', Float64, queue_size=10)
 
-        self.magnetometerPub = rospy.Publisher(self.robot_host + '/imu/magnetometer', Float64, queue_size=10)
-        self.magnetometerRawPub = rospy.Publisher(self.robot_host + '/imu/magnetometer/raw', Vector3, queue_size=10)
+        self.magnetometerPub = rospy.Publisher(self.robot_host + '/imu/magnetometer', Magnetometer, queue_size=10)
+        self.magnetometerRawPub = rospy.Publisher(self.robot_host + '/imu/magnetometer/raw', Orientation, queue_size=10)
 
-        self.orientationPub = rospy.Publisher(self.robot_host + '/imu/orientation', Vector3, queue_size=10)
-        self.orientationDegreePub = rospy.Publisher(self.robot_host + '/imu/orientation/degrees', Vector3, queue_size=10)
-        self.orientationRadiansPub = rospy.Publisher(self.robot_host + '/imu/orientation/radians', Vector3, queue_size=10)
-        self.orientationNorthPub = rospy.Publisher(self.robot_host + '/imu/orientation/north', Float64, queue_size=10)
+        self.orientationPub = rospy.Publisher(self.robot_host + '/imu/orientation', Orientation, queue_size=10)
+        self.orientationDegreePub = rospy.Publisher(self.robot_host + '/imu/orientation/degrees', Orientation, queue_size=10)
+        self.orientationRadiansPub = rospy.Publisher(self.robot_host + '/imu/orientation/radians', Orientation, queue_size=10)
+        self.orientationNorthPub = rospy.Publisher(self.robot_host + '/imu/orientation/north', Magnetometer, queue_size=10)
 
         self.rate = rospy.Rate(10) # 10hz
 
@@ -58,31 +64,31 @@ class IMU(object):
         self.imuPub = rospy.Publisher(self.robot_host + '/imu', Imu, queue_size=10)
         self.imuRawPub = rospy.Publisher(self.robot_host + '/imu/raw', Imu, queue_size=10)
         
-        self.accelerometerPub = rospy.Publisher(self.robot_host + '/imu/accelerometer', Vector3, queue_size=10)
-        self.accelerometerPitchPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/pitch', Float64, queue_size=10)
-        self.accelerometerRollPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/roll', Float64, queue_size=10)
-        self.accelerometerYawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/yaw', Float64, queue_size=10)
-        self.accelerometerRawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw', Vector3, queue_size=10)
+        self.accelerometerPub = rospy.Publisher(self.robot_host + '/imu/accelerometer', Accelerometer, queue_size=10)
+        self.accelerometerPitchPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/pitch', Pitch, queue_size=10)
+        self.accelerometerRollPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/roll', Roll, queue_size=10)
+        self.accelerometerYawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/yaw', Yaw, queue_size=10)
+        self.accelerometerRawPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw', Accelerometer, queue_size=10)
         self.accelerometerRawXPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw/x', Float64, queue_size=10)
         self.accelerometerRawYPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw/y', Float64, queue_size=10)
         self.accelerometerRawZPub = rospy.Publisher(self.robot_host + '/imu/accelerometer/raw/z', Float64, queue_size=10)
 
-        self.gyroscopePub = rospy.Publisher(self.robot_host + '/imu/gyroscope', Vector3, queue_size=10)
-        self.gyroscopePitchPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/pitch', Float64, queue_size=10)
-        self.gyroscopeRollPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/roll', Float64, queue_size=10)
-        self.gyroscopeYawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/yaw', Float64, queue_size=10)
-        self.gyroscopeRawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw', Vector3, queue_size=10)
+        self.gyroscopePub = rospy.Publisher(self.robot_host + '/imu/gyroscope', Gyroscope, queue_size=10)
+        self.gyroscopePitchPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/pitch', Pitch, queue_size=10)
+        self.gyroscopeRollPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/roll', Roll, queue_size=10)
+        self.gyroscopeYawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/yaw', Yaw, queue_size=10)
+        self.gyroscopeRawPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw', Gyroscope, queue_size=10)
         self.gyroscopeRawXPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw/x', Float64, queue_size=10)
         self.gyroscopeRawYPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw/y', Float64, queue_size=10)
         self.gyroscopeRawZPub = rospy.Publisher(self.robot_host + '/imu/gyroscope/raw/z', Float64, queue_size=10)
 
-        self.magnetometerPub = rospy.Publisher(self.robot_host + '/imu/magnetometer', Float64, queue_size=10)
-        self.magnetometerRawPub = rospy.Publisher(self.robot_host + '/imu/magnetometer/raw', Vector3, queue_size=10)
+        self.magnetometerPub = rospy.Publisher(self.robot_host + '/imu/magnetometer', Magnetometer, queue_size=10)
+        self.magnetometerRawPub = rospy.Publisher(self.robot_host + '/imu/magnetometer/raw', Orientation, queue_size=10)
 
-        self.orientationPub = rospy.Publisher(self.robot_host + '/imu/orientation', Vector3, queue_size=10)
-        self.orientationDegreePub = rospy.Publisher(self.robot_host + '/imu/orientation/degrees', Vector3, queue_size=10)
-        self.orientationRadiansPub = rospy.Publisher(self.robot_host + '/imu/orientation/radians', Vector3, queue_size=10)
-        self.orientationNorthPub = rospy.Publisher(self.robot_host + '/imu/orientation/north', Float64, queue_size=10)
+        self.orientationPub = rospy.Publisher(self.robot_host + '/imu/orientation', Orientation, queue_size=10)
+        self.orientationDegreePub = rospy.Publisher(self.robot_host + '/imu/orientation/degrees', Orientation, queue_size=10)
+        self.orientationRadiansPub = rospy.Publisher(self.robot_host + '/imu/orientation/radians', Orientation, queue_size=10)
+        self.orientationNorthPub = rospy.Publisher(self.robot_host + '/imu/orientation/north', Magnetometer, queue_size=10)
 
         sense = SenseHat()
 
@@ -134,69 +140,124 @@ class IMU(object):
             imu_raw_msg.angular_velocity_covariance = [0.0, 0.0 , 0.0, 0.0 , 0.0, 0.0, 0.0 , 0.0 , 0.0]
             imu_raw_msg.linear_acceleration_covariance = [0.0 , 0.0 , 0.0, 0.0 , 0.0, 0.0, 0.0 , 0.0 , 0.0]
 
-            accel_msg = Vector3()
+            accel_msg = Accelerometer()
+            accel_msg.header.stamp = rospy.Time.now()
+            accel_msg.header.frame_id = "/base_link"
             accel_msg.x = accel_only['pitch']
             accel_msg.y = accel_only['roll']
             accel_msg.z = accel_only['yaw']
-            accel_pitch_msg = Float64()
-            accel_roll_msg = Float64()
-            accel_yaw_msg = Float64()
+
+
+            accel_pitch_msg = Pitch()
+            accel_pitch_msg.header.stamp = rospy.Time.now()
+            accel_pitch_msg.header.frame_id = "/base_link"
             accel_pitch_msg.data = accel_only['pitch']
+
+            accel_roll_msg = Roll()
+            accel_roll_msg.header.stamp = rospy.Time.now()
+            accel_roll_msg.header.frame_id = "/base_link"
             accel_roll_msg.data = accel_only['roll']
+
+            accel_yaw_msg = Yaw()
+            accel_yaw_msg.header.stamp = rospy.Time.now()
+            accel_yaw_msg.header.frame_id = "/base_link"
             accel_yaw_msg.data = accel_only['yaw']
 
-            accel_raw_msg = Vector3()
+            accel_raw_msg = Accelerometer()
+            accel_raw_msg.header.stamp = rospy.Time.now()
+            accel_raw_msg.header.frame_id = "/base_link"
             accel_raw_msg.x = accel_raw['x']
             accel_raw_msg.y = accel_raw['y']
             accel_raw_msg.z = accel_raw['z']
+
             accel_raw_x_msg = Float64()
-            accel_raw_y_msg = Float64()
-            accel_raw_z_msg = Float64()
+            accel_raw_x_msg.header.stamp = rospy.Time.now()
+            accel_raw_x_msg.header.frame_id = "/base_link"
             accel_raw_x_msg.data = accel_raw['x']
+
+            accel_raw_y_msg = Float64()
+            accel_raw_y_msg.header.stamp = rospy.Time.now()
+            accel_raw_y_msg.header.frame_id = "/base_link"
             accel_raw_y_msg.data = accel_raw['y']
+
+            accel_raw_z_msg = Float64()
+            accel_raw_z_msg.header.stamp = rospy.Time.now()
+            accel_raw_z_msg.header.frame_id = "/base_link"
             accel_raw_z_msg.data = accel_raw['z']
 
-            gyro_msg = Vector3()
+            gyro_msg = Gyroscope()
+            gyro_msg.header.stamp = rospy.Time.now()
+            gyro_msg.header.frame_id = "/base_link"
             gyro_msg.x = gyro_only['pitch']
             gyro_msg.y = gyro_only['roll']
             gyro_msg.z = gyro_only['yaw']
-            gyro_pitch_msg = Float64()
-            gyro_roll_msg = Float64()
-            gyro_yaw_msg = Float64()
+
+            gyro_pitch_msg = Pitch()
+            gyro_pitch_msg.header.stamp = rospy.Time.now()
+            gyro_pitch_msg.header.frame_id = "/base_link"
             gyro_pitch_msg.data = gyro_only['pitch']
+
+            gyro_roll_msg = Roll()
+            gyro_roll_msg.header.stamp = rospy.Time.now()
+            gyro_roll_msg.header.frame_id = "/base_link"
             gyro_roll_msg.data = gyro_only['roll']
+
+            gyro_yaw_msg = Yaw()
+            gyro_yaw_msg.header.stamp = rospy.Time.now()
+            gyro_yaw_msg.header.frame_id = "/base_link"
             gyro_yaw_msg.data = gyro_only['yaw']
 
-            gyro_raw_msg = Vector3()
+            gyro_raw_msg = Gyroscope()
+            gyro_raw_msg.header.stamp = rospy.Time.now()
+            gyro_raw_msg.header.frame_id = "/base_link"
             gyro_raw_msg.x = gyro_raw['x']
             gyro_raw_msg.y = gyro_raw['y']
             gyro_raw_msg.z = gyro_raw['z']
+
             gyro_raw_x_msg = Float64()
-            gyro_raw_y_msg = Float64()
-            gyro_raw_z_msg = Float64()
+            gyro_raw_x_msg.header.stamp = rospy.Time.now()
+            gyro_raw_x_msg.header.frame_id = "/base_link"
             gyro_raw_x_msg.data = gyro_raw['x']
+
+            gyro_raw_y_msg = Float64()
+            gyro_raw_y_msg.header.stamp = rospy.Time.now()
+            gyro_raw_y_msg.header.frame_id = "/base_link"
             gyro_raw_y_msg.data = gyro_raw['y']
+
+            gyro_raw_z_msg = Float64()
+            gyro_raw_z_msg.header.stamp = rospy.Time.now()
+            gyro_raw_z_msg.header.frame_id = "/base_link"
             gyro_raw_z_msg.data = gyro_raw['z']
 
-            north_msg = Float64()
-            north_msg.data = north
+            north_msg = Magnetometer()
+            north_msg.header.stamp = rospy.Time.now()
+            north_msg.header.frame_id = "/base_link"
+            north_msg.north = north
             
-            compass_msg = Vector3()
+            compass_msg = Orientation()
+            compass_msg.header.stamp = rospy.Time.now()
+            compass_msg.header.stamp = rospy.Time.now()
             compass_msg.x = compass['x']
             compass_msg.y = compass['y']
             compass_msg.z = compass['z']
 
-            orientation_msg = Vector3()
+            orientation_msg = Orientation()
+            orientation_msg.header.stamp = rospy.Time.now()
+            orientation_msg.header.stamp = rospy.Time.now()
             orientation_msg.x = orientation['pitch']
             orientation_msg.y = orientation['roll']
             orientation_msg.z = orientation['yaw']
 
-            orientation_degree_msg = Vector3()
+            orientation_degree_msg = Orientation()
+            orientation_degree_msg.header.stamp = rospy.Time.now()
+            orientation_degree_msg.header.stamp = rospy.Time.now()
             orientation_degree_msg.x = orientation_deg['pitch']
             orientation_degree_msg.y = orientation_deg['roll']
             orientation_degree_msg.z = orientation_deg['yaw']
 
-            orientation_rad_msg = Vector3()
+            orientation_rad_msg = Orientation()
+            orientation_rad_msg.header.stamp = rospy.Time.now()
+            orientation_rad_msg.header.stamp = rospy.Time.now()
             orientation_rad_msg.x = orientation_rad['pitch']
             orientation_rad_msg.y = orientation_rad['roll']
             orientation_rad_msg.z = orientation_rad['yaw']

@@ -49,13 +49,14 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  Motor.msg
-  Steer.msg
-  Pan.msg
-  Tilt.msg
-)
+# add_message_files(
+## moved to robotcar_msgs package
+#   FILES
+#   Motor.msg
+#   Steer.msg
+#   Pan.msg
+#   Tilt.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
