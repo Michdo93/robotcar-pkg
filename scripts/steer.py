@@ -11,11 +11,11 @@ import re
 from std_msgs.msg import Bool
 from std_msgs.msg import Int8
 from robotcar_msgs.msg import Steer
-from robotcar_msgs.msg import SteerDeg
-from robotcar_msgs.msg import SteerIntervall
-from robotcar_msgs.msg import SteerIntervallDeg
-from robotcar_msgs.msg import SteerRange
-from robotcar_msgs.msg import SteerRangeDeg
+from robotcar_msgs.msg import ServoDeg
+from robotcar_msgs.msg import ServoIntervall
+from robotcar_msgs.msg import ServoIntervallDeg
+from robotcar_msgs.msg import ServoRange
+from robotcar_msgs.msg import ServoRangeDeg
 
 env=os.path.expanduser(os.path.expandvars('/home/' + getpass.getuser() + '/robotcar/config'))
 sys.path.insert(0, env)
@@ -45,35 +45,35 @@ class SteerNode(object):
         self.steerSub = rospy.Subscriber(self.robot_host + '/steer/set', Steer, self.steerCallback)
 
         self.steerPWMSub = rospy.Subscriber(self.robot_host + '/steer/set/pwm', Steer, self.steerCallback)
-        self.steerDegressSub = rospy.Subscriber(self.robot_host + '/steer/set/degree', SteerDeg, self.steerDegreeCallback)
+        self.steerDegressSub = rospy.Subscriber(self.robot_host + '/steer/set/degree', ServoDeg, self.steerDegreeCallback)
 
         self.steerResetSub = rospy.Subscriber(self.robot_host + '/steer/reset', Bool, self.steerResetCallback)
 
         self.steerPub = rospy.Publisher(self.robot_host + '/steer/get', Steer, queue_size=10)
         self.steerPWMPub = rospy.Publisher(self.robot_host + '/steer/get/pwm', Steer, queue_size=10)
-        self.steerDegreePub = rospy.Publisher(self.robot_host + '/steer/get/degree', SteerDeg, queue_size=10)  
+        self.steerDegreePub = rospy.Publisher(self.robot_host + '/steer/get/degree', ServoDeg, queue_size=10)  
 
-        self.steerIntervallPub = rospy.Publisher(self.robot_host + '/steer/get/intervall', SteerIntervall, queue_size=10)
-        self.steerIntervallPWMPub = rospy.Publisher(self.robot_host + '/steer/get/intervall/pwm', SteerIntervall, queue_size=10)
-        self.steerIntervallDegreePub = rospy.Publisher(self.robot_host + '/steer/get/intervall/degree', SteerIntervallDeg, queue_size=10)
+        self.steerIntervallPub = rospy.Publisher(self.robot_host + '/steer/get/intervall', ServoIntervall, queue_size=10)
+        self.steerIntervallPWMPub = rospy.Publisher(self.robot_host + '/steer/get/intervall/pwm', ServoIntervall, queue_size=10)
+        self.steerIntervallDegreePub = rospy.Publisher(self.robot_host + '/steer/get/intervall/degree', ServoIntervallDeg, queue_size=10)
 
         self.steerChannelPub = rospy.Publisher(self.robot_host + '/steer/get/channel', Int8, queue_size=10)
 
         self.steerMinPub = rospy.Publisher(self.robot_host + '/steer/get/min', Steer, queue_size=10)
         self.steerMinPWMPub = rospy.Publisher(self.robot_host + '/steer/get/min/pwm', Steer, queue_size=10)
-        self.steerMinDegreePub = rospy.Publisher(self.robot_host + '/steer/get/min/degree', SteerDeg, queue_size=10)
+        self.steerMinDegreePub = rospy.Publisher(self.robot_host + '/steer/get/min/degree', ServoDeg, queue_size=10)
 
         self.steerMaxPub = rospy.Publisher(self.robot_host + '/steer/get/max', Steer, queue_size=10)
         self.steerMaxPWMPub = rospy.Publisher(self.robot_host + '/steer/get/max/pwm', Steer, queue_size=10)
-        self.steerMaxDegreePub = rospy.Publisher(self.robot_host + '/steer/get/max/degree', SteerDeg, queue_size=10)
+        self.steerMaxDegreePub = rospy.Publisher(self.robot_host + '/steer/get/max/degree', ServoDeg, queue_size=10)
 
         self.steerNeutralPub = rospy.Publisher(self.robot_host + '/steer/get/neutral', Steer, queue_size=10)
         self.steerNeutralPWMPub = rospy.Publisher(self.robot_host + '/steer/get/neutral/pwm', Steer, queue_size=10)
-        self.steerNeutralDegreePub = rospy.Publisher(self.robot_host + '/steer/get/neutral/degree', SteerDeg, queue_size=10)
+        self.steerNeutralDegreePub = rospy.Publisher(self.robot_host + '/steer/get/neutral/degree', ServoDeg, queue_size=10)
 
-        self.steerRangePub = rospy.Publisher(self.robot_host + '/steer/get/range', SteerRange, queue_size=10)
-        self.steerRangePWMPub = rospy.Publisher(self.robot_host + '/steer/get/range/pwm', SteerRange, queue_size=10)
-        self.steerRangeDegreePub = rospy.Publisher(self.robot_host + '/steer/get/range/degree', SteerRangeDeg, queue_size=10)
+        self.steerRangePub = rospy.Publisher(self.robot_host + '/steer/get/range', ServoRange, queue_size=10)
+        self.steerRangePWMPub = rospy.Publisher(self.robot_host + '/steer/get/range/pwm', ServoRange, queue_size=10)
+        self.steerRangeDegreePub = rospy.Publisher(self.robot_host + '/steer/get/range/degree', ServoRangeDeg, queue_size=10)
 
         self.rate = rospy.Rate(10) # 10hz
 
@@ -89,56 +89,56 @@ class SteerNode(object):
         self.steerSub = rospy.Subscriber(self.robot_host + '/steer/set', Steer, self.steerCallback)
 
         self.steerPWMSub = rospy.Subscriber(self.robot_host + '/steer/set/pwm', Steer, self.steerCallback)
-        self.steerDegressSub = rospy.Subscriber(self.robot_host + '/steer/set/degree', SteerDeg, self.steerDegreeCallback)
+        self.steerDegressSub = rospy.Subscriber(self.robot_host + '/steer/set/degree', ServoDeg, self.steerDegreeCallback)
 
         self.steerResetSub = rospy.Subscriber(self.robot_host + '/steer/reset', Bool, self.steerResetCallback)
 
         self.steerPub = rospy.Publisher(self.robot_host + '/steer/get', Steer, queue_size=10)
         self.steerPWMPub = rospy.Publisher(self.robot_host + '/steer/get/pwm', Steer, queue_size=10)
-        self.steerDegreePub = rospy.Publisher(self.robot_host + '/steer/get/degree', SteerDeg, queue_size=10)  
+        self.steerDegreePub = rospy.Publisher(self.robot_host + '/steer/get/degree', ServoDeg, queue_size=10)  
 
-        self.steerIntervallPub = rospy.Publisher(self.robot_host + '/steer/get/intervall', SteerIntervall, queue_size=10)
-        self.steerIntervallPWMPub = rospy.Publisher(self.robot_host + '/steer/get/intervall/pwm', SteerIntervall, queue_size=10)
-        self.steerIntervallDegreePub = rospy.Publisher(self.robot_host + '/steer/get/intervall/degree', SteerIntervallDeg, queue_size=10)
+        self.steerIntervallPub = rospy.Publisher(self.robot_host + '/steer/get/intervall', ServoIntervall, queue_size=10)
+        self.steerIntervallPWMPub = rospy.Publisher(self.robot_host + '/steer/get/intervall/pwm', ServoIntervall, queue_size=10)
+        self.steerIntervallDegreePub = rospy.Publisher(self.robot_host + '/steer/get/intervall/degree', ServoIntervallDeg, queue_size=10)
 
         self.steerChannelPub = rospy.Publisher(self.robot_host + '/steer/get/channel', Int8, queue_size=10)
 
         self.steerMinPub = rospy.Publisher(self.robot_host + '/steer/get/min', Steer, queue_size=10)
         self.steerMinPWMPub = rospy.Publisher(self.robot_host + '/steer/get/min/pwm', Steer, queue_size=10)
-        self.steerMinDegreePub = rospy.Publisher(self.robot_host + '/steer/get/min/degree', SteerDeg, queue_size=10)
+        self.steerMinDegreePub = rospy.Publisher(self.robot_host + '/steer/get/min/degree', ServoDeg, queue_size=10)
 
         self.steerMaxPub = rospy.Publisher(self.robot_host + '/steer/get/max', Steer, queue_size=10)
         self.steerMaxPWMPub = rospy.Publisher(self.robot_host + '/steer/get/max/pwm', Steer, queue_size=10)
-        self.steerMaxDegreePub = rospy.Publisher(self.robot_host + '/steer/get/max/degree', SteerDeg, queue_size=10)
+        self.steerMaxDegreePub = rospy.Publisher(self.robot_host + '/steer/get/max/degree', ServoDeg, queue_size=10)
 
         self.steerNeutralPub = rospy.Publisher(self.robot_host + '/steer/get/neutral', Steer, queue_size=10)
         self.steerNeutralPWMPub = rospy.Publisher(self.robot_host + '/steer/get/neutral/pwm', Steer, queue_size=10)
-        self.steerNeutralDegreePub = rospy.Publisher(self.robot_host + '/steer/get/neutral/degree', SteerDeg, queue_size=10)
+        self.steerNeutralDegreePub = rospy.Publisher(self.robot_host + '/steer/get/neutral/degree', ServoDeg, queue_size=10)
 
-        self.steerRangePub = rospy.Publisher(self.robot_host + '/steer/get/range', SteerRange, queue_size=10)
-        self.steerRangePWMPub = rospy.Publisher(self.robot_host + '/steer/get/range/pwm', SteerRange, queue_size=10)
-        self.steerRangeDegreePub = rospy.Publisher(self.robot_host + '/steer/get/range/degree', SteerRangeDeg, queue_size=10)
+        self.steerRangePub = rospy.Publisher(self.robot_host + '/steer/get/range', ServoRange, queue_size=10)
+        self.steerRangePWMPub = rospy.Publisher(self.robot_host + '/steer/get/range/pwm', ServoRange, queue_size=10)
+        self.steerRangeDegreePub = rospy.Publisher(self.robot_host + '/steer/get/range/degree', ServoRangeDeg, queue_size=10)
 
         while not rospy.is_shutdown():
             steerMsg = Steer()
-            steerDegMsg = SteerDeg()
+            steerDegMsg = ServoDeg()
 
-            steerIntervallMsg = SteerIntervall()
-            steerIntervallDegMsg = SteerIntervallDeg()
+            steerIntervallMsg = ServoIntervall()
+            steerIntervallDegMsg = ServoIntervallDeg()
 
             steerChannelMsg = Int8()
 
             steerMinMsg = Steer()
-            steerMinDegMsg = SteerDeg()
+            steerMinDegMsg = ServoDeg()
 
             steerMaxMsg = Steer()
-            steerMaxDegMsg = SteerDeg()
+            steerMaxDegMsg = ServoDeg()
 
             steerNeutralMsg = Steer()
-            steerNeutralDegMsg = SteerDeg()
+            steerNeutralDegMsg = ServoDeg()
 
-            steerRangeMsg = SteerRange()
-            steerRangeDegMsg = SteerRangeDeg()
+            steerRangeMsg = ServoRange()
+            steerRangeDegMsg = ServoRangeDeg()
 
             steerMsg.pwm = self.mg996r.get_current_pwm()
             steerDegMsg.angle = self.mg996r.get_current_degree()
