@@ -7,13 +7,13 @@ import rospy
 from sense_hat import SenseHat
 from std_header_msgs.msg import Float64
 from sensor_msgs.msg import Imu
-from robotcar_msgs import Accelerometer
-from robotcar_msgs import Gyroscope
-from robotcar_msgs import Magnetometer
-from robotcar_msgs import Orientation
-from robotcar_msgs import Pitch
-from robotcar_msgs import Roll
-from robotcar_msgs import Yaw
+from robotcar_msgs.msg import Accelerometer
+from robotcar_msgs.msg import Gyroscope
+from robotcar_msgs.msg import Magnetometer
+from robotcar_msgs.msg import Orientation
+from robotcar_msgs.msg import Pitch
+from robotcar_msgs.msg import Roll
+from robotcar_msgs.msg import Yaw
 
 class IMU(object):
 
