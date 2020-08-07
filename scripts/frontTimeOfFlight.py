@@ -19,7 +19,7 @@ class FrontTimeOfFlight(object):
     def __init__(self):
         self.robot_host = re.sub("-", "_", socket.gethostname())
         self.tofPub = rospy.Publisher(self.robot_host + '/time_of_flight/front/distance', Range, queue_size=10)
-        self.tofVelocityPub = rospy.Publisher(self.robot_host + '/time_of_flight/front/relative_celocity', RelativeVelocity, queue_size=10)
+        self.tofVelocityPub = rospy.Publisher(self.robot_host + '/time_of_flight/front/relative_velocity', RelativeVelocity, queue_size=10)
         
         self.rate = rospy.Rate(10) # 10hz
 
@@ -33,7 +33,7 @@ class FrontTimeOfFlight(object):
     def start(self):
         self.enable = True
         self.tofPub = rospy.Publisher(self.robot_host + '/time_of_flight/front/distance', Range, queue_size=10)
-        self.tofVelocityPub = rospy.Publisher(self.robot_host + '/time_of_flight/front/relative_celocity', RelativeVelocity, queue_size=10)
+        self.tofVelocityPub = rospy.Publisher(self.robot_host + '/time_of_flight/front/relative_velocity', RelativeVelocity, queue_size=10)
 
         tof = ToFVL53L1X(0x28, 25)
         #tof = ToFVL53L1X(0x2a, 12)
@@ -83,7 +83,7 @@ class FrontTimeOfFlight(object):
             rv.min_range = min_range
             rv.max_range = max_range
 
-            rv.range = relative_velocity
+            rv.relative_velocity = relative_velocity
                 
             self.tofPub.publish(r)
             self.tofVelocityPub.publish(rv)

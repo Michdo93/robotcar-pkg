@@ -68,7 +68,7 @@ class FrontInfrared():
             rv.min_range = min_range
             rv.max_range = max_range
 
-            rv.range = relative_velocity
+            rv.relative_velocity = relative_velocity
                 
             self.infraredPub.publish(r)
             self.infraredVelocityPub.publish(rv)

@@ -19,7 +19,7 @@ class FrontUltrasonic(object):
     def __init__(self):
         self.robot_host = re.sub("-", "_", socket.gethostname())
         self.ultrasonicPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/distance', Range, queue_size=10)
-        self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/rear/velocity', RelativeVelocity, queue_size=10)
+        self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/rear/relative_velocity', RelativeVelocity, queue_size=10)
         
         self.rate = rospy.Rate(10) # 10hz
 
@@ -33,7 +33,7 @@ class FrontUltrasonic(object):
     def start(self):
         self.enable = True
         self.ultrasonicPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/distance', Range, queue_size=10)        
-        self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/rear/velocity', RelativeVelocity, queue_size=10)
+        self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/rear/relative_velocity', RelativeVelocity, queue_size=10)
         
         ultrasonic = UltrasonicParallax(27)
 
@@ -64,6 +64,7 @@ class FrontUltrasonic(object):
             
             #for distance in ranges:
             r = Range()
+            rv = RelativeVelocity()
 
             r.header.stamp = rospy.Time.now()
             r.header.frame_id = "/base_link"

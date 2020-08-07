@@ -144,7 +144,7 @@ class SteerNode(object):
             steerDegMsg.angle = self.mg996r.get_current_degree()
 
             steerIntervallMsg.intervall_pwm = self.mg996r.get_intervall_pwm()
-            steerIntervallDegMsg.intervall_deg = self.mg996r.get_intervall_degree()
+            steerIntervallDegMsg.intervall_angle = self.mg996r.get_intervall_degree()
 
             steerChannelMsg.data = self.mg996r.get_channel()
 

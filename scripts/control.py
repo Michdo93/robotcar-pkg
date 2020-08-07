@@ -137,7 +137,7 @@ class RobotCarControl(object):
 
 if __name__ == '__main__':
     # Initialize the node and name it.
-    node_name = re.sub("-", "_", socket.gethostname()) + "_RobotCarControl"
+    node_name = re.sub("-", "_", socket.gethostname()) + "_Control"
     rospy.init_node(node_name, anonymous=False)
     
     robotCarControl = RobotCarControl()

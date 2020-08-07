@@ -1,0 +1,17 @@
+<launch>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_Control" type="control.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontInfrared" type="frontInfrared.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontLeftUltrasonic" type="frontLeftUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontRightUltrasonic" type="frontRightUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontTimeOfFlight" type="frontTimeOfFlight.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontUltrasonic" type="frontUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_IMU" type="imu.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_Meteorological" type="meteorological.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_Motor" type="motor.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearInfrared" type="rearInfrared.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearLeftUltrasonic" type="rearLeftUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearRightUltrasonic" type="rearRightUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearTimeOfFlight" type="rearTimeOfFlight.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearUltrasonic" type="rearUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_Steer" type="steer.py" output="screen"/>
+</launch>
