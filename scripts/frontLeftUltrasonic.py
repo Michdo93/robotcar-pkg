@@ -35,7 +35,7 @@ class FrontLeftUltrasonic(object):
         self.ultrasonicPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/left/distance', Range, queue_size=10)
         self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/front/left/relative_velocity', RelativeVelocity, queue_size=10)
         
-        ultrasonic = UltrasonicHCSR04(23, 24)
+        ultrasonicFrontLeft = UltrasonicHCSR04(23, 24)
 
         #ranges = [float('NaN'), 1.0, -float('Inf'), 3.0, float('Inf')]
         min_range = 3
@@ -43,8 +43,8 @@ class FrontLeftUltrasonic(object):
 
         while not rospy.is_shutdown():
             
-            distance = ultrasonic.distance()
-            relative_velocity = ultrasonic.speed()
+            distance = ultrasonicFrontLeft.distance()
+            relative_velocity = ultrasonicFrontLeft.speed()
 
             message_str = "frontLeftUltrasonic Distance: %s cm and Speed: %s m/s" % (distance, relative_velocity)
             rospy.loginfo(message_str)
@@ -66,8 +66,6 @@ class FrontLeftUltrasonic(object):
             rv.header.frame_id = "/base_link"
             rv.radiation_type = Range.ULTRASOUND
             rv.field_of_view = 0.26179938779915 # 15 degrees
-            rv.min_range = min_range
-            rv.max_range = max_range
 
             rv.relative_velocity = relative_velocity
                 
@@ -87,12 +85,13 @@ if __name__ == '__main__':
     rospy.init_node(node_name, anonymous=False)
     # Go to class functions that do all the heavy lifting.
 
-    ultrasonic = FrontLeftUltrasonic()
+    front_left_ultrasonic = FrontLeftUltrasonic()
 
     try:
-        ultrasonic.start()
+        front_left_ultrasonic.start()
     except rospy.ROSInterruptException:
-        ultrasonic.stop()
+        front_left_ultrasonic.stop()
+        rospy.logerr("ROS Interrupt Exception!")
         pass
     # Allow ROS to go to all callbacks.
     # spin() simply keeps python from exiting until this node is stopped

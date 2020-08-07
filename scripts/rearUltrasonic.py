@@ -78,8 +78,6 @@ class RearUltrasonic(object):
             rv.header.frame_id = "/base_link"
             rv.radiation_type = Range.ULTRASOUND
             rv.field_of_view = 0.34906585039887 # 20 degrees
-            rv.min_range = min_range
-            rv.max_range = max_range
 
             rv.relative_velocity = relative_velocity
                 
@@ -99,12 +97,12 @@ if __name__ == '__main__':
     rospy.init_node(node_name, anonymous=False)
     # Go to class functions that do all the heavy lifting.
 
-    ultrasonic = RearUltrasonic()
+    rear_ultrasonic = RearUltrasonic()
 
     try:
-        ultrasonic.start()
+        rear_ultrasonic.start()
     except rospy.ROSInterruptException:
-        ultrasonic.stop()
+        rear_ultrasonic.stop()
         pass
     # Allow ROS to go to all callbacks.
     # spin() simply keeps python from exiting until this node is stopped

@@ -35,7 +35,7 @@ class RearLeftUltrasonic(object):
         self.ultrasonicPub = rospy.Publisher(self.robot_host + '/ultrasonic/rear/left/distance', Range, queue_size=10)
         self.ultrasonicVelocityPub = rospy.Publisher(self.robot_host + '/ultrasonic/rear/left/relative_velocity', RelativeVelocity, queue_size=10)
         
-        ultrasonic = UltrasonicHCSR04(19, 26)
+        ultrasonicRearLeft = UltrasonicHCSR04(19, 26)
 
         #ranges = [float('NaN'), 1.0, -float('Inf'), 3.0, float('Inf')]
         min_range = 3
@@ -43,8 +43,8 @@ class RearLeftUltrasonic(object):
 
         while not rospy.is_shutdown():
             
-            distance = ultrasonic.distance()
-            relative_velocity = ultrasonic.speed()
+            distance = ultrasonicRearLeft.distance()
+            relative_velocity = ultrasonicRearLeft.speed()
 
             message_str = "rearLeftUltrasonic Distance: %s cm and Speed: %s m/s" % (distance, relative_velocity)
             rospy.loginfo(message_str)
@@ -66,13 +66,11 @@ class RearLeftUltrasonic(object):
             rv.header.frame_id = "/base_link"
             rv.radiation_type = Range.ULTRASOUND
             rv.field_of_view = 0.26179938779915 # 15 degrees
-            rv.min_range = min_range
-            rv.max_range = max_range
 
             rv.relative_velocity = relative_velocity
                 
             self.ultrasonicPub.publish(r)
-            self.ultrasonicVelocityPub.publish(rv)  
+            self.ultrasonicVelocityPub.publish(rv)
             self.rate.sleep()
 
     def stop(self):
@@ -87,12 +85,13 @@ if __name__ == '__main__':
     rospy.init_node(node_name, anonymous=False)
     # Go to class functions that do all the heavy lifting.
 
-    ultrasonic = RearLeftUltrasonic()
+    rear_left_ultrasonic = RearLeftUltrasonic()
 
     try:
-        ultrasonic.start()
+        rear_left_ultrasonic.start()
     except rospy.ROSInterruptException:
-        ultrasonic.stop()
+        rear_left_ultrasonic.stop()
+        rospy.logerr("ROS Interrupt Exception!")
         pass
     # Allow ROS to go to all callbacks.
     # spin() simply keeps python from exiting until this node is stopped

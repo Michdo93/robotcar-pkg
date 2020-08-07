@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontLeftUltrasonic" type="frontLeftUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontRightUltrasonic" type="frontRightUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_FrontUltrasonic" type="frontUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearLeftUltrasonic" type="rearLeftUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearRightUltrasonic" type="rearRightUltrasonic.py" output="screen"/>
+    <node pkg="robotcar" name="$(env ROS_HOSTNAME)_RearUltrasonic" type="rearUltrasonic.py" output="screen"/>
+</launch>
