@@ -65,8 +65,6 @@ class FrontInfrared():
             rv.header.frame_id = "/base_link"
             rv.radiation_type = Range.INFRARED
             rv.field_of_view = 0.087266462599716 # 5 degrees
-            rv.min_range = min_range
-            rv.max_range = max_range
 
             rv.relative_velocity = relative_velocity
                 

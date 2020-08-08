@@ -80,8 +80,6 @@ class RearTimeOfFlight(object):
             rv.header.frame_id = "/base_link"
             rv.radiation_type = Range.INFRARED
             rv.field_of_view = 0.471239 # 27 degrees
-            rv.min_range = min_range
-            rv.max_range = max_range
 
             rv.relative_velocity = relative_velocity
                 
